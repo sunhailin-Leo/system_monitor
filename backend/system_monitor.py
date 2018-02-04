@@ -13,6 +13,7 @@ from backend.resources.monitor import MemoryChecker
 from backend.resources.monitor import CpuChecker
 from backend.resources.monitor import UserInfo
 from backend.resources.monitor import ProcessInfo
+from backend.resources.monitor import UsingPortInfo
 
 
 # 项目配置文件
@@ -49,6 +50,9 @@ class Backend:
         self._api.add_resource(CpuChecker, self._version_prefix + "/monitor/cpu")
         self._api.add_resource(UserInfo, self._version_prefix + "/monitor/user")
         self._api.add_resource(ProcessInfo, self._version_prefix + "/monitor/process")
+
+        # 请求有点漫长 -- 暂时不用(尽管开了多线程还是慢)
+        # self._api.add_resource(UsingPortInfo, self._version_prefix + "/monitor/port")
 
         self._app.register_blueprint(self._api_bp)
 

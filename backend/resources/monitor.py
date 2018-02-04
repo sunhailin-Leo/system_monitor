@@ -61,3 +61,10 @@ class ProcessInfo(Resource):
     @staticmethod
     def get():
         return json.loads(system.get_process_info())
+
+
+# 可用端口信息
+class UsingPortInfo(Resource):
+    @staticmethod
+    def get():
+        return json.loads(system.get_port_info())

@@ -8,16 +8,23 @@ Created on 2017年11月29日
 import sys
 import json
 import time
+import socket
 import platform
 from collections import OrderedDict
 
 # 第三方库
 import psutil
 
+# 项目内部库
+from backend.common.port_info import PortScanner
+
 
 # 系统信息查询
 class SystemChecker:
     def __init__(self, lang):
+        # 端口扫描器
+        self.port = PortScanner()
+
         # 系统信息字段
         self.system_dict_en = OrderedDict()
         self.system_dict_zh = OrderedDict()
@@ -110,13 +117,16 @@ class SystemChecker:
 
         # 系统不一样
         if system == "Windows":
-            self.system_dict_en['sys_info'] = self.system_dict_zh['系统信息'] = "".join(system_version.split("-")[:2]) + " x" + system_architecture[0].replace("bit", "")
+            self.system_dict_en['sys_info'] = self.system_dict_zh['系统信息'] = "".join(
+                system_version.split("-")[:2]) + " x" + system_architecture[0].replace("bit", "")
         elif system == "Linux":
             if "Ubuntu" in system:
-                system_info = system + " " + system_version.split("-")[6:8] + " x" + platform.architecture()[0].replace("bit", "")
+                system_info = system + " " + \
+                    system_version.split("-")[6:8] + " x" + platform.architecture()[0].replace("bit", "")
                 self.system_dict_en['sys_info'] = self.system_dict_zh['系统信息'] = system_info
             elif "centos" in system or "redhat" in system:
-                system_info = system + " " + system_version.split("-")[5:7] + " x" + platform.architecture()[0].replace("bit", "")
+                system_info = system + " " + \
+                    system_version.split("-")[5:7] + " x" + platform.architecture()[0].replace("bit", "")
                 self.system_dict_en['sys_info'] = self.system_dict_zh['系统信息'] = system_info
             else:
                 self.system_dict_en['info'] = self.system_dict_zh['信息'] = "Unknown Device"
@@ -245,6 +255,10 @@ class SystemChecker:
         # 返回
         return json.dumps(json_data, ensure_ascii=False)
 
+    def get_port_info(self):
+        return json.dumps(self.port.entrance(host=socket.gethostbyname(socket.gethostname())),
+                          ensure_ascii=False)
+
     # 获取全部信息
     def get_all(self):
         # 获取信息
@@ -288,7 +302,6 @@ def help_center():
 
 
 if __name__ == '__main__':
-
     '''
     'Linux - 4.4.0 - 85 - generic - x86_64 - with - Ubuntu - 16.04 - xenial' [6:8]
     'Linux - 2.6.32 - 431.el6.x86_64 - x86_64 - with - centos - 6.5 - Final' [5:7]
